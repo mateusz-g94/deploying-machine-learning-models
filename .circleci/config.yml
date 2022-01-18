@@ -1,4 +1,4 @@
-version: 3
+version: 2
 
 defaults: &defaults
   docker:
@@ -292,11 +292,11 @@ tags_only: &tags_only
       only: /^.*/
 
 workflows:
-  version: 3
+  version: 2
   section_07:
     jobs:
       - section_07_test_and_upload_regression_model:
-          <<: *tags_only
+          #<<: *tags_only
       - section_07_test_app:
           requires:
             - section_07_test_and_upload_regression_model
