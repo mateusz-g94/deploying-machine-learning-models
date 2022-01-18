@@ -292,7 +292,7 @@ tags_only: &tags_only
       only: /^.*/
 
 workflows:
-  version: 2
+  version: 3
   section_07:
     jobs:
       - section_07_test_and_upload_regression_model:
