@@ -299,7 +299,9 @@ workflows:
       # upload after git tags are created
       - section_07_test_and_upload_regression_model:
           <<: *tags_only
-      - section_07_test_app
+      - section_07_test_app:
+          requires:
+            - section_07_test_and_upload_regression_model
       - section_07_deploy_app_to_heroku:
           requires:
             - section_07_test_app
