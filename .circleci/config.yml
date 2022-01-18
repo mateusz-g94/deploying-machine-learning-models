@@ -308,6 +308,8 @@ workflows:
               only:
                 - master
       - section_08_deploy_app_container_in_heroku:
+          requires:
+            - section_07_deploy_app_to_heroku
           filters:
             branches:
               only:
