@@ -71,7 +71,6 @@ jobs:
           command: |
             tox -e publish_model
 
-
   section_08_deploy_app_container_in_heroku:
     <<: *defaults
     steps:
