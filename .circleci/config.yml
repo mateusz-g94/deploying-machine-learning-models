@@ -71,6 +71,7 @@ jobs:
           command: |
             tox -e publish_model
 
+
   section_08_deploy_app_container_in_heroku:
     <<: *defaults
     steps:
@@ -241,7 +242,7 @@ jobs:
 
   section_12_publish_docker_image_to_aws:
     <<: *defaults
-    working_directory: ~/project/packages/ml_models
+    working_directory: ~/project/packages/ml_api
     steps:
       - checkout
       - setup_remote_docker
@@ -249,9 +250,11 @@ jobs:
           name: Publishing docker image to aws ECR
           command: |
             sudo pip install awscli
-            eval $(aws ecr get-login --no-include-email --region us-east-1)
+            eval $(aws ecr get-login-password | docker login --username AWS --password-stdin ${AWS_ACCOUNT}.dkr.ecr.eu-central-1.amazonaws.com/${AWS_REPO_NAME})
             make build-ml-api-aws tag-ml-api push-ml-api-aws
-            aws ecs update-service --cluster ml-api-cluster --service custom-service --task-definition  first-run-task-definition --force-new-deployment
+            aws ecs update-service --cluster ml-api-cluster --service ml-api-cluster-service --task-definition  first-run-task-definition --force-new-deployment
+            
+
 
   section_13_train_and_upload_neural_network_model:
     docker:
@@ -295,11 +298,7 @@ workflows:
   version: 2
   section_07:
     jobs:
-      - section_07_test_and_upload_regression_model
-          #<<: *tags_only
-      - section_07_test_app:
-          requires:
-            - section_07_test_and_upload_regression_model
+      - section_07_test_app
       - section_07_deploy_app_to_heroku:
           requires:
             - section_07_test_app
@@ -307,13 +306,21 @@ workflows:
             branches:
               only:
                 - master
-      - section_08_deploy_app_container_in_heroku:
-          requires:
-            - section_07_deploy_app_to_heroku
-          filters:
-            branches:
-              only:
-                - master
+      # upload after git tags are created
+      - section_07_test_and_upload_regression_model:
+          <<: *tags_only
+      #- section_08_deploy_app_container_in_heroku:
+          #filters:
+            #branches:
+              #only:
+                #- master
+      - section_12_publish_docker_image_to_aws:
+      	    requires:
+      	      - section_07_test_and_upload_regression_model
+      	    filters:
+      	      branches:
+      	      	only:
+      	      	  - master
 
 #  test-all:
 #    jobs:
