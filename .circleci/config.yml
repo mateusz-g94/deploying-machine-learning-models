@@ -304,7 +304,7 @@ workflows:
             - section_07_test_and_upload_regression_model
       - section_12_publish_docker_image_to_aws:
           requires:
-            - section_07_test_app:
+            - section_07_test_app
           filters:
             branches:
               only:
