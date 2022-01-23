@@ -298,12 +298,13 @@ workflows:
   version: 2
   section_07:
     jobs:
-      - section_07_test_app
-      - section_07_test_and_upload_regression_model:
-          <<: *tags_only
-      - section_12_publish_docker_image_to_aws:
+      - section_07_test_and_upload_regression_model
+      - section_07_test_app:
           requires:
             - section_07_test_and_upload_regression_model
+      - section_12_publish_docker_image_to_aws:
+          requires:
+            - section_07_test_app:
           filters:
             branches:
               only:
